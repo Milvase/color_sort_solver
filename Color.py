@@ -15,7 +15,7 @@ from copy import deepcopy
 
 
 '''
-
+S = 0
 Pallet = [[2,1,2,1], [3,3,4,5], [6,1,7,8], [9,6,10,6], [3,9,8,6], [11,5,12,11], [7,10,8,11],
           [9,1,5,10], [8,11,12,9], [2,10,4,7], [3,4,12,4], [7,12,2,5], [0,0,0,0], [0,0,0,0]]
 default_cap = 4
@@ -52,7 +52,8 @@ def all_posible(pallet):
                 if pallet[jar1_no] != pallet[jar2_no]:
                     if last_color(pallet[jar1_no]) != 0:
                         if last_color(pallet[jar1_no]) == last_color(pallet[jar2_no]) or last_color(pallet[jar2_no]) == 0:
-                            posibilities.append([jar1_no, jar2_no])
+                            if forward_test(jar1_no,jar2_no) not in all_pallets():
+                                posibilities.append([jar1_no, jar2_no])
     return posibilities
 
 def first_empty(jar):
@@ -66,6 +67,16 @@ def road_record():
     all_acts.append([0,all_posible(Pallet),deepcopy(Pallet)])
     record_correction()
 
+def forward_test(jar1_no:int, jar2_no:int):
+    pall = deepcopy(Pallet)
+    jar1_last_color = last_color(pall[jar1_no])
+    jar1_lasted_used = first_empty(pall[jar1_no])-1
+    jar2_first_empty = first_empty(pall[jar2_no])
+    pall[jar2_no][jar2_first_empty] = jar1_last_color
+    pall[jar1_no][jar1_lasted_used] = 0
+    return pall
+
+
 def record_correction():
     if len(all_acts) > 1:
         key = all_acts[-2][1][0]
@@ -75,6 +86,35 @@ def record_correction():
                 all_acts[-1][1].pop(i)
                 break
 
+def log(status:str):
+    global S
+    S += 1
+    last_act = all_acts[-1]
+    Log = ''
+    Log += f'    <step{S}>\n'
+    Log += f'        <act>{status}</act>\n'
+    Log += f'        <opt>{last_act[0]}</opt>\n'
+    Log += f'        <alt>{last_act[1]}</alt>\n'
+    Log += f'        <pal>{last_act[2]}</pal>\n'
+    Log += f'    </step{S}>\n'
+    with open('log.xml', 'a') as file:
+        print(Log, file=file)
+
+def log_start():
+    Log = '<log>'
+    with open('log.xml', 'w') as file:
+        print(Log, file=file)   
+
+def log_finish():
+    Log = '</log>'
+    with open('log.xml', 'a') as file:
+        print(Log, file=file)      
+
+def all_pallets():
+    result = []
+    for i in all_acts:
+        result.append(deepcopy(i[2]))
+    return result
 
 def forward():
     act = all_acts[-1][1][all_acts[-1][0]]
@@ -86,8 +126,10 @@ def forward():
     Pallet[jar2_no][jar2_first_empty] = jar1_last_color
     Pallet[jar1_no][jar1_lasted_used] = 0
     road_record()
+    log('fore')
 
 def backward():
+    log('back')
     all_acts.pop(-1)
     Pallet = deepcopy(all_acts[-1][2])
     all_acts[-1][0] += 1
@@ -118,5 +160,6 @@ def run():
             forward()
             print('-----------------------------------------------')
     print(Results())
-
+log_start()
 run()
+log_finish()
