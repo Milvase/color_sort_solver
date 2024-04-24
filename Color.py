@@ -76,7 +76,8 @@ def record_correction():
                 break
 
 
-def forward(act):
+def forward():
+    act = all_acts[-1][1][all_acts[-1][0]]
     jar1_no = act[0]
     jar2_no = act[1]
     jar1_last_color = last_color(Pallet[jar1_no])
@@ -114,7 +115,7 @@ def run():
                 print(f'r_no:{j[0]}')
                 print(f'pos:{j[1]}')
                 print(f'pall:{j[2]}')
-            forward(all_acts[-1][1][0])
+            forward()
             print('-----------------------------------------------')
     print(Results())
 
