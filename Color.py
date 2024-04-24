@@ -21,6 +21,7 @@ Pallet = [[2,1,2,1], [3,3,4,5], [6,1,7,8], [9,6,10,6], [3,9,8,6], [11,5,12,11], 
 default_cap = 4
 # all_act = 1.select solution, 2.all posible, 3.pallet
 all_acts = []
+all_palls = []
 
 def check(pallet):
     answer = True
@@ -52,7 +53,12 @@ def all_posible(pallet):
                 if pallet[jar1_no] != pallet[jar2_no]:
                     if last_color(pallet[jar1_no]) != 0:
                         if last_color(pallet[jar1_no]) == last_color(pallet[jar2_no]) or last_color(pallet[jar2_no]) == 0:
-                            if forward_test(jar1_no,jar2_no) not in all_pallets():
+                            loop = False
+                            pall = forward_test(jar1_no,jar2_no)
+                            for i in all_palls:
+                                if pall == i:
+                                    loop = True
+                            if not loop:
                                 posibilities.append([jar1_no, jar2_no])
     return posibilities
 
@@ -65,6 +71,7 @@ def first_empty(jar):
 
 def road_record():
     all_acts.append([0,all_posible(Pallet),deepcopy(Pallet)])
+    all_palls.append(deepcopy(Pallet))
     record_correction()
 
 def forward_test(jar1_no:int, jar2_no:int):
@@ -110,13 +117,8 @@ def log_finish():
     with open('log.xml', 'a') as file:
         print(Log, file=file)      
 
-def all_pallets():
-    result = []
-    for i in all_acts:
-        result.append(deepcopy(i[2]))
-    return result
-
 def forward():
+    log('fore')
     act = all_acts[-1][1][all_acts[-1][0]]
     jar1_no = act[0]
     jar2_no = act[1]
@@ -126,13 +128,13 @@ def forward():
     Pallet[jar2_no][jar2_first_empty] = jar1_last_color
     Pallet[jar1_no][jar1_lasted_used] = 0
     road_record()
-    log('fore')
 
 def backward():
+    global Pallet
     log('back')
+    Pallet = deepcopy(all_acts[-2][2])
+    all_acts[-2][0] += 1
     all_acts.pop(-1)
-    Pallet = deepcopy(all_acts[-1][2])
-    all_acts[-1][0] += 1
 
 def backward_needed():
     if all_acts[-1][0] >= len(all_acts[-1][1]) or len(all_acts[-1][1]) == 0:
@@ -153,12 +155,7 @@ def run():
         if backward_needed():
             backward()
         else:
-            for j in all_acts:
-                print(f'r_no:{j[0]}')
-                print(f'pos:{j[1]}')
-                print(f'pall:{j[2]}')
             forward()
-            print('-----------------------------------------------')
     print(Results())
 log_start()
 run()
