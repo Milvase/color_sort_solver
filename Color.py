@@ -15,13 +15,30 @@ from copy import deepcopy
 
 
 '''
+default_cap = int(input('How many color can pour in a jar?'))
+Pallet_cap = int(input('How many jar is in game?'))
+jar_empty = int(input('How many jar is empty?'))
+color_quantity = (Pallet_cap-jar_empty)*default_cap
+
 S = 0
-Pallet = [[2,1,2,1], [3,3,4,5], [6,1,7,8], [9,6,10,6], [3,9,8,6], [11,5,12,11], [7,10,8,11],
-          [9,1,5,10], [8,11,12,9], [2,10,4,7], [3,4,12,4], [7,12,2,5], [0,0,0,0], [0,0,0,0]]
-default_cap = 4
+Pallet = []
+generate_empty_pallet()
+
 # all_act = 1.select solution, 2.all posible, 3.pallet
 all_acts = []
 all_palls = []
+
+def generate_empty_pallet():
+    for i in range(Pallet_cap):
+        jar = []
+        for j in range(default_cap):
+            jar.append(0)
+    Pallet.append(jar)
+
+def coloring():
+    color_list = []
+    for i in range(color_quantity):
+        # resume code
 
 def check(pallet):
     answer = True
