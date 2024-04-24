@@ -1,4 +1,5 @@
 from copy import deepcopy
+from os import system
 '''
 1 = dark Green
 2 = light green
@@ -15,30 +16,54 @@ from copy import deepcopy
 
 
 '''
-default_cap = int(input('How many color can pour in a jar?'))
-Pallet_cap = int(input('How many jar is in game?'))
-jar_empty = int(input('How many jar is empty?'))
-color_quantity = (Pallet_cap-jar_empty)*default_cap
+default_cap = int(input('How many color can pour in a jar? '))
+Pallet_cap = int(input('How many jar is in game? '))
+jar_empty = int(input('How many jar is empty? '))
+color_quantity = (Pallet_cap-jar_empty)
 
 S = 0
 Pallet = []
-generate_empty_pallet()
-
-# all_act = 1.select solution, 2.all posible, 3.pallet
-all_acts = []
-all_palls = []
 
 def generate_empty_pallet():
     for i in range(Pallet_cap):
         jar = []
         for j in range(default_cap):
+            print(i,j)
             jar.append(0)
-    Pallet.append(jar)
+        Pallet.append(jar)
+    print(Pallet)
+
+def visualize():
+    result = ''
+    for i in range(default_cap):
+        I = -1-i
+        for j in Pallet:
+            if j[I] != 0:
+                result += '■ '
+            else:
+                result += '□ '
+        result += '\n'
+    system('cls')
+    print(result)
 
 def coloring():
     color_list = []
+    id = 0
     for i in range(color_quantity):
-        # resume code
+        id += 1
+        color_name = input('Please write your color name: ')
+        for i in range(default_cap):
+            visualize()
+            jar_no = int(input(f'{i}- wich jar has this color? ')) - 1
+            cell_no = int(input(f'{i}- wich cell? ')) - 1
+            Pallet[jar_no][cell_no] = id
+
+generate_empty_pallet()
+coloring()
+
+# all_act = 1.select solution, 2.all posible, 3.pallet
+all_acts = []
+all_palls = []
 
 def check(pallet):
     answer = True
